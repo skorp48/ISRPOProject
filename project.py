@@ -94,6 +94,20 @@ def check_cart():
         dish_cart_list.append(dishes[0])
     return render_template('index.html', catlst=cat, dishlst=dish_cart_list, cart=cart)
 
+@app.route("/cart", methods=['POST'])
+def cart():
+    lst = request.values.dicts[1]['dishlst']
+    global cart
+    cat = db.session.query(Category).all()
+    dish_cart_list=[]
+    query = db.session.query(Dish)
+    data = json.loads(lst)
+    for item in data:
+        cart_dish_id = item["dish"]
+        dishes = query.filter(Dish.id == int(cart_dish_id)).all()
+        dish_cart_list.append({"dish":dishes[0],"quantity":item["quantity"]})
+    return render_template('cart.html',catlst=cat,cart=dish_cart_list)
+
 @app.route('/')
 def hello_world():
     cat = db.session.query(Category).all()
