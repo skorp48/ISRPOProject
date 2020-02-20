@@ -1,14 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <body>
-        <li>1</li>
-        <li>2</li>
-        <li>3</li>
-    </body>
-</body>
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="{{url_for('static', filename='script.js')}}"></script>
+        <script src="{{url_for('static', filename='script_cart.js')}}"></script>
+        <!--!!!------------------------JS--------------------------!!!-->
+        <script>
+
+
+        </script>
+
+
+    </head>
+<div class="nav-m">
+            <ul >
+                {% for item in catlst %}
+                    <li class="nav-item"> <a href="/каталог/{{ item }}" > {{ item }} </a> </li>
+                {% endfor %}
+            </ul>
+            <a class="nav-item dish-list" href="#" >
+                <div class="nav-item">
+                    <img src="{{ url_for('static', filename='images/tray-cart.png') }}" height="100%">
+                    
+
+                </div>
+            </a>
+            <div class="count">
+                Блюд:
+            </div>
+        </div>
+{% if ((cart|length) == 0) %}
+<h1 class="cart-title">Поднос пуст</h1>
+{% else %}
+<h1 class="cart-title">Подноc</h1>
+<table class="cart-tbl">
+    <tbody>
+    {% for item in cart %}
+        <tr data-id="{{item.dish.id}}">
+            <td class="cart-title"> {{item.dish.name}}</td>
+            <td>
+            <div class="cart-counter">
+                <button class="cart-cnt cart-cnt--down" ></button>
+                <span class="cart-cnt-t"> {{item.quantity}} </span>
+                <button class="cart-cnt cart-cnt--up" >  </button>
+            </div>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
 </html>
