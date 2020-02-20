@@ -1,7 +1,13 @@
 
 <html>
     <head>
-       <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="{{url_for('static', filename='script.js')}}"></script>
+        <!--!!!------------------------JS--------------------------!!!-->
+        <script>    </script>
+
+
     </head>
   <body>
         <div class="nav-m">
@@ -10,13 +16,13 @@
                     <li class="nav-item"> <a href="/каталог/{{ item }}" > {{ item }} </a> </li>
                 {% endfor %}
             </ul>
-            <a class="nav-item" href="/#">
+            <a class="nav-item dish-list" href="#">
                 <div class="nav-item">
                     <img src="{{ url_for('static', filename='images/tray-cart.png') }}" height="100%">
 
                 </div>
             </a>
-            <div>
+            <div class="count">
                 Блюд: {{cart|length}}
             </div>
         </div>
@@ -33,7 +39,7 @@
                   {{ditem.desc}}
                 </div>
                 <div class="cont-item-plate">
-                    <a  data-id="{{ditem.id}}" class="cont-item-plate-ok" href="# " onclick="addToTray()"> На поднос </a>
+                    <a  data-id="{{ditem.id}}" class="cont-item-plate-ok" href="# "> На поднос </a>
                 </div>
               </div>
             {% endfor %}

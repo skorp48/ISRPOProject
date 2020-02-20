@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Table, Column
 from sqlalchemy import String, Integer, ForeignKey
 from flask import render_template,request
+import json
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 
@@ -79,6 +80,19 @@ def hello_world_again(kat_name):
         lst.append(dish)
     #last_ds=lst
     return render_template('index.html',catlst=cat,dishlst=lst)
+
+@app.route("/check_cart", methods=['POST'])
+def check_cart():
+    lst = request.values.dicts[1]['dishlst']
+    cat = db.session.query(Category).all()
+    query = db.session.query(Dish)
+    dish_cart_list = []
+    data = json.loads(lst)
+    for item in data:
+        cart_dish_id = item["dish"]
+        dishes = query.filter(Dish.id == int(cart_dish_id)).all()
+        dish_cart_list.append(dishes[0])
+    return render_template('index.html', catlst=cat, dishlst=dish_cart_list, cart=cart)
 
 @app.route('/')
 def hello_world():
