@@ -1,4 +1,3 @@
-
 $(document).ready(function(){
             var lst = [];
             var her = localStorage.getItem ("lst");
@@ -9,7 +8,30 @@ $(document).ready(function(){
             $(".count").html("Блюд: " + lst.length);
 	        $(".cont-item-plate-ok").click(function(){
 	            var product_id = this.dataset.id;
-                lst.push({dish:product_id,quantity:1});
+                var url = "/cart/add";
+
+                search = (key, inputArray) => {
+                    for (let i=0; i < inputArray.length; i++) {
+                        if (inputArray[i].dish === key) {
+                          return inputArray[i];
+                        }
+                    }
+                }
+
+                let found = search(product_id, lst);
+                if (found == undefined)
+                {
+                    lst.push({dish:product_id,quantity:1});
+                }
+                else
+                    {
+                        for (var i in lst) {
+                            if (lst[i].dish == product_id) {
+                                lst[i].quantity = lst[i].quantity+1;
+                                break;
+                            }
+                        }
+                    }
                 var json2 =JSON.stringify(lst);
                 localStorage.setItem("lst", json2);
                 $(".count").html("Блюд: " + lst.length);
@@ -17,7 +39,7 @@ $(document).ready(function(){
             });
 
             $(".dish-list").click(function(){
-                 var url = "/check_cart";
+                 var url = "/cart";
                  var jsonstr = null;
                  if (localStorage.getItem ("lst") != null){
                     jsonstr = localStorage.getItem ("lst");
@@ -36,5 +58,4 @@ $(document).ready(function(){
                  }
                 return false;
             })
-
         });
