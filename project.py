@@ -4,7 +4,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Table, Column
 from sqlalchemy import String, Integer, ForeignKey
-
+from flask import render_template,request
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 
@@ -66,7 +66,22 @@ admin.add_view(ModelView(Restaurant, db.session))
 admin.add_view(ModelView(Category, db.session))
 
 
-app.run()
+#app.run()
 
+@app.route('/каталог/<string:kat_name>')
+def hello_world_again(kat_name):
+    cat = db.session.query(Category).all()
+    query=db.session.query(Category,Dish)
+    query=query.join(Dish, Dish.category_id == Category.id)
+    lst=[]
+    dishes=query.filter(Category.name==kat_name).all()
+    for category,dish in dishes:
+        lst.append(dish)
+    #last_ds=lst
+    return render_template('index.html',catlst=cat,dishlst=lst)
 
+@app.route('/')
+def hello_world():
+    cat = db.session.query(Category).all()
+    return render_template('index.html',catlst=cat)
 

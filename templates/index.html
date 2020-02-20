@@ -1,0 +1,42 @@
+
+<html>
+    <head>
+       <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    </head>
+  <body>
+        <div class="nav-m">
+            <ul >
+                {% for item in catlst %}
+                    <li class="nav-item"> <a href="/каталог/{{ item }}" > {{ item }} </a> </li>
+                {% endfor %}
+            </ul>
+            <a class="nav-item" href="/#">
+                <div class="nav-item">
+                    <img src="{{ url_for('static', filename='images/tray-cart.png') }}" height="100%">
+
+                </div>
+            </a>
+            <div>
+                Блюд: {{cart|length}}
+            </div>
+        </div>
+         <div class="container">
+            {% for ditem in dishlst %}
+              <div class="cont-item">
+                <div class="cont-item-img">
+                    место для рекламы
+                </div>
+                <div class="cont-item-title">
+                    {{ ditem.name }}
+                </div>
+                <div class="cont-item-comp">
+                  {{ditem.desc}}
+                </div>
+                <div class="cont-item-plate">
+                    <a  data-id="{{ditem.id}}" class="cont-item-plate-ok" href="# " onclick="addToTray()"> На поднос </a>
+                </div>
+              </div>
+            {% endfor %}
+         </div>
+  </body>
+</html>
