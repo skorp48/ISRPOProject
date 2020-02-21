@@ -15,14 +15,11 @@
                     <li class="nav-item"> <a href="/каталог/{{ item }}" > {{ item }} </a> </li>
                 {% endfor %}
             </ul>
-            <a class="nav-item dish-list" href="#">
-                <div class="nav-item">
+            <a class="nav-item dish-list" href="/cart" >
                     <img src="{{ url_for('static', filename='images/tray-cart.png') }}" height="100%">
-
-                </div>
             </a>
             <div class="count">
-                Блюд: {{cart|length}}
+                Блюд:
             </div>
         </div>
          <div class="container">

@@ -10,10 +10,10 @@
                     <li class="nav-item"> <a href="/каталог/{{ item }}" > {{ item }} </a> </li>
                 {% endfor %}
             </ul>
-            <a class="nav-item dish-list" href="#" >
+            <a class="nav-item dish-list" href="/cart" >
                 <div class="nav-item">
                     <img src="{{ url_for('static', filename='images/tray-cart.png') }}" height="100%">
-                    
+
 
                 </div>
             </a>
@@ -36,6 +36,9 @@
                 <span class="cart-cnt-t"> {{item.quantity}} </span>
                 <button class="cart-cnt cart-cnt--up" >  </button>
             </div>
+            </td>
+            <td>
+                <button class="cart-cnt cart-cnt--del" >  </button>
             </td>
         </tr>
     {% endfor %}

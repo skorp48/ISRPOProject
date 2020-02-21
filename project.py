@@ -4,7 +4,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Table, Column
 from sqlalchemy import String, Integer, ForeignKey
-from flask import render_template,request
+from flask import render_template,request,redirect,session,url_for
 import json
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -78,8 +78,12 @@ def hello_world_again(kat_name):
     dishes=query.filter(Category.name==kat_name).all()
     for category,dish in dishes:
         lst.append(dish)
-    #last_ds=lst
-    return render_template('index.html',catlst=cat,dishlst=lst)
+    return render_template('index.html',catlst=cat,dishlst=lst,cart=cart)
+
+@app.route("/cart/add", methods=['POST'])
+def add_to_cart():
+    session['cart'] = request.values.dicts[1]['dishlst']
+    return redirect(url_for('cart'))
 
 @app.route("/check_cart", methods=['POST'])
 def check_cart():
@@ -94,10 +98,13 @@ def check_cart():
         dish_cart_list.append(dishes[0])
     return render_template('index.html', catlst=cat, dishlst=dish_cart_list, cart=cart)
 
-@app.route("/cart", methods=['POST'])
+@app.route("/cart", methods=['POST','GET'])
 def cart():
-    lst = request.values.dicts[1]['dishlst']
-    global cart
+    cat = db.session.query(Category).all()
+    if 'cart' in session:
+        lst=session['cart']
+    else:
+        return render_template('cart.html',catlst=cat,cart=[])
     cat = db.session.query(Category).all()
     dish_cart_list=[]
     query = db.session.query(Dish)
@@ -111,5 +118,5 @@ def cart():
 @app.route('/')
 def hello_world():
     cat = db.session.query(Category).all()
-    return render_template('index.html',catlst=cat)
+    return render_template('index.html',catlst=cat,cart=cart)
 
