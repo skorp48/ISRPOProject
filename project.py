@@ -2,7 +2,7 @@ from flask_admin import Admin
 from flask_admin.contrib.sqlamodel import ModelView
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Table, Column
+from sqlalchemy import Table, Column,union,intersect
 from sqlalchemy import String, Integer, ForeignKey
 from flask import render_template,request,redirect,session,url_for
 import json
@@ -83,6 +83,30 @@ def hello_world_again(kat_name):
 @app.route("/cart/add", methods=['POST'])
 def add_to_cart():
     session['cart'] = request.values.dicts[1]['dishlst']
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
+# временный вариант
+@app.route("/cart/search", methods=['POST','GET'])
+def search_place():
+    lst=session['cart']
+    queryA=db.session.query(Restaurant.id)
+    queryA=queryA.join(Menu_str, Menu_str.restaurant_id == Restaurant.id)
+    data = json.loads(lst)
+    q_lst=[]
+    for item in data:
+        q_lst.append(queryA.filter(Menu_str.dish_id==int(item["dish"])))
+    queryB=intersect(*q_lst)
+    rez=db.session.execute(queryB).fetchall()
+    cat = db.session.query(Category).all()
+    if len(rez)==0:
+        return render_template('cart.html', catlst=cat, cart=[],r_lst=[],mode=False)
+    else:
+        queryC=db.session.query(Restaurant)
+        f_rez=[]
+        for r in rez:
+            rest=queryC.filter(Restaurant.id==int(r[0])).first()
+            f_rez.append(rest)
+        return render_template('cart.html', catlst=cat, cart=[],r_lst=f_rez,mode=False)
     return redirect(url_for('cart'))
 
 @app.route("/check_cart", methods=['POST'])
