@@ -11,7 +11,7 @@ app.config.from_pyfile('config.py')
 
 db = SQLAlchemy(app)
 
-print("hello")
+
 class Menu_str(db.Model):
     __tablename__='Menu_str'
     id = db.Column(db.Integer(), primary_key=True)
