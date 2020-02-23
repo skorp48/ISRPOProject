@@ -12,17 +12,25 @@
 
     $(document).ready(function(){
         $(".js").click(function(){
+            //var item=$(this).closest('detail-window')[0];
+            //item.hide();
             $(".detail-window").hide();
             $(".js").hide();
         });
 
         $(".close-detail").click(function(){
-            $(".detail-window").hide();
+            //var item=$(this).closest('detail-window')[0];
+            //item.hide();
+            $($(this).closest('.cont-restaurant')[0].children[3]).hide();
+            //$(".detail-window").hide();
             $(".js").hide();
         });
 
         $(".detail-button").click(function(){
-            $(".detail-window").show();
+            //var item=$(this).closest('detail-window')[0];
+            $($(this).closest('.cont-restaurant')[0].children[3]).show();
+            //item.show();
+            //$(".detail-window").show();
             $(".js").show();
         });
     });
@@ -69,23 +77,23 @@
         <p> Подходящие заведения: </p>
         {% for item in r_lst %}
             <div class="cont-restaurant">
-                <p> {{item.name}}</p>
-                <P> Цена : N </P>
+                <p> {{item['rest'].name}}</p>
+                <P> Цена : {{item['total']}} </P>
                 <div class="cart-search" >
                     <a  class="detail-button" > Подробнее </a>
                 </div>
                 <!-- Вспылвающее окно "Подробнее"-->
-                <div class="detail-window">
-                    <p> {{item.name}} </p>
-                    <p> {{item.address}}</p>
+                <div class="detail-window" id>
+                    <p> {{item['rest'].name}} </p>
+                    <p> {{item['rest'].address}}</p>
                     <a href="#" class="open-map-button"> Показать на карте </a>
                         <div class="open-map">
                             <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3Ad0ed4653b0200ee8a0ccf6879009b6d6e9d43775965c7141fbd3634df5f881fb&amp;source=constructor" width="500" height="400" frameborder="0"></iframe>
                             <a href="#" class="close-map"> Закрыть </a>
                         </div>
                     <div class="dish-item-cost">
-                        {% for item in cart %}
-                            <p>{{item.name}}  {NNNN.NN}руб</p>
+                        {% for d in item['dl'] %}
+                            <p>{{ d[0] }} {{d[2]}} * {{d[1]}} руб</p>
                         {% endfor %}
                     </div>
                     <a href="#" class="close-detail"> Закрыть </a>
