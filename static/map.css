@@ -1,0 +1,30 @@
+.open-map{
+        width:300px;
+        height:150px;
+        background:pink;
+        position:absolute;
+        left:50%; margin-left:-150px;
+        top:50%; margin-top:-75px;
+        display:none;
+      }
+
+
+.open-map-button{
+        display:block;
+        width:200px;
+        padding:8px 0;
+        background:lightgreen;
+        margin:0 40px;
+        text-align:center;
+        cursor:pointer;
+      }
+
+.close-map{
+        display:block;
+        width:200px;
+        padding:8px 0;
+        background:red;
+        margin:0 40px;
+        text-align:center;
+        cursor:pointer;
+      }
