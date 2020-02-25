@@ -16,7 +16,7 @@
                 {% endfor %}
             </ul>
             <a class="nav-item dish-list" href="/cart" >
-                    <img src="{{ url_for('static', filename='images/tray-cart.png') }}" height="100%">
+                    <img class="cart" src="{{ url_for('static', filename='images/tray-cart.png') }}" height="100%">
             </a>
             <div class="count">
                 Блюд:
@@ -26,7 +26,11 @@
             {% for ditem in dishlst %}
               <div class="cont-item">
                 <div class="cont-item-img">
-                    место для рекламы
+                    {% if (ditem.image != None) %}
+                        <img src="{{ url_for('static', filename='images/')}}{{ditem.image}}" alt="место для рекламы"  height="100%">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/dish.jpg') }}" alt="место для рекламы"  height="100%">
+                    {% endif %}
                 </div>
                 <div class="cont-item-title">
                     {{ ditem.name }}

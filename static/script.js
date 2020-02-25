@@ -16,7 +16,6 @@ $(document).ready(function(){
                 jsonstr = localStorage.getItem ("lst");
                 lst = JSON.parse(jsonstr);
             }
-            //$(".count").html("Блюд: " + lst.length);
             renderCount()
 
 	        $(".cont-item-plate-ok").click(function(){
@@ -56,46 +55,50 @@ $(document).ready(function(){
                        method: 'POST',
                        data: {dishlst:jsonstr},
                        success: function(response){
-                            //document.write(response);
-                            //location.reload();
                        },
                        error : function(exeption){
                             console.log(exeption);
                        }
                     });
                  }
-                renderCount()
-                //$(".count").html("Блюд: " + lst.length);
+                renderCount();
+				var cart = $('.cart');
+                var imgtodrag = $($(this).closest('.cont-item')[0].children[0]).eq(0);
+
+    			if (imgtodrag) {
+    				var imgclone = imgtodrag.clone()
+    					.offset({
+    						top: imgtodrag.offset().top,
+    						left: imgtodrag.offset().left
+    					})
+    					.css({
+    						'opacity': '0.5',
+    						'position': 'absolute',
+    						'width': imgtodrag.width(),
+    						'height': imgtodrag.height(),
+    						'z-index': '100'
+    					})
+    					.appendTo($('body'))
+    					.animate({
+    						'top': cart.offset().top + 10,
+    						'left': cart.offset().left + 10,
+    						'width': 75,
+    						'height': 32
+    					}, 500);
+
+    				imgclone.animate({
+    					'width': 0,
+    					'height': 0
+    				}, function () {
+    					$(this).detach()
+    				});
+    			}
                 return false;
             });
-
-            // $(".dish-list").click(function(){
-            //      //var url = "/check_cart";
-            //      var url = "/cart";
-            //      var jsonstr = null;
-            //      if (localStorage.getItem ("lst") != null){
-            //         jsonstr = localStorage.getItem ("lst");
-            //      }
-            //      if (jsonstr != null){
-            //          $.ajax(url, {
-            //           method: 'POST',
-            //           data: {dishlst:jsonstr},
-            //           success: function(response){
-            //                 document.write(response);
-            //           },
-            //           error : function(exeption){
-            //                 console.log(exeption);
-            //           }
-            //         });
-            //      }
-            //     return false;
-            // })
-
             $(".cart-cnt--down").click(function(){
                 var item=$(this).closest('tr')[0];
                 var product_id= item.dataset.id;
                 var new_val=0;
-                //var url = "/cart";
                 var url = "/cart/add";
                 if (localStorage.getItem ("lst") != null){
                 jsonstr = localStorage.getItem ("lst");
@@ -127,8 +130,6 @@ $(document).ready(function(){
                            {
                                $(item).find('span')[0].textContent=new_val;
                            }
-                            //document.write(response);
-                            //location.reload();
                        },
                        error : function(exeption){
                             console.log(exeption);
@@ -165,8 +166,6 @@ $(document).ready(function(){
                        data: {dishlst:jsonstr},
                        success: function(){
                            item.parentNode.removeChild(item);
-                            //document.write(response);
-                            //location.reload();
                        },
                        error : function(exeption){
                             console.log(exeption);
@@ -180,7 +179,6 @@ $(document).ready(function(){
                 var item=$(this).closest('tr')[0];
                 var product_id= item.dataset.id;
                 var new_val=0;
-                //var url = "/cart";
                 var url = "/cart/add";
                 if (localStorage.getItem ("lst") != null){
                 jsonstr = localStorage.getItem ("lst");
@@ -205,9 +203,6 @@ $(document).ready(function(){
                        data: {dishlst:jsonstr},
                        success: function(){
                             $(item).find('span')[0].textContent=new_val;
-                            //document.documentElement.innerHTML = response;
-                            //document.write(response);
-                            //location.reload();
                        },
                        error : function(exeption){
                             console.log(exeption);
