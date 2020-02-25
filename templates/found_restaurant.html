@@ -8,6 +8,15 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='map.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="{{url_for('static', filename='script.js')}}"></script>
+	
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+   crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+   integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+   crossorigin=""></script>
+   
     <script>
 
     $(document).ready(function(){
@@ -44,6 +53,22 @@
             $(".open-map").hide();
         });
         $(".open-map-button").click(function(){
+            var lat=parseFloat(this.dataset.lat) ;
+            var lng=parseFloat(this.dataset.lng) ;
+            var desc=$(this).closest('.cont-restaurant')[0].children[0].textContent ;
+            var mapid=$(this).closest('.cont-restaurant')[0].children[3].children[3].id ;
+            document.getElementById(mapid).innerHTML=null;
+            var container = L.DomUtil.get(mapid); if(container != null){ container._leaflet_id = null; }
+            {
+                var map = L.map(mapid).setView([lat, lng], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+                    L.marker([lat, lng]).addTo(map)
+                        .bindPopup(desc)
+                        .openPopup();
+                map._onResize();
+            }
             $(".open-map").show();
         });
     });
@@ -86,10 +111,9 @@
                 <div class="detail-window" id>
                     <p> {{item['rest'].name}} </p>
                     <p> {{item['rest'].address}}</p>
-                    <a href="#" class="open-map-button"> Показать на карте </a>
-                        <div class="open-map">
-                            <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3Ad0ed4653b0200ee8a0ccf6879009b6d6e9d43775965c7141fbd3634df5f881fb&amp;source=constructor" width="500" height="400" frameborder="0"></iframe>
-                            <a href="#" class="close-map"> Закрыть </a>
+                    {% set coords = item['rest'].coord.split(' ') %}
+                    <a href="#" data-lat="{{coords[0]}}" data-lng="{{coords[1]}}" class="open-map-button"> Показать на карте </a>
+                        <div class="open-map" id="leafletmap{{item['rest'].id}}">
                         </div>
                     <div class="dish-item-cost">
                         {% for d in item['dl'] %}
