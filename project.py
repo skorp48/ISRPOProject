@@ -1,16 +1,25 @@
+import os
+import os.path as op
+
 from flask_admin import Admin
 from flask_admin.contrib.sqlamodel import ModelView
+from flask_admin import form
+from flask_admin.form import rules
+from flask_admin.contrib import sqla
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Table, Column,union,intersect
 from sqlalchemy import String, Integer, ForeignKey
 from flask import render_template,request,redirect,session,url_for
 import json
+from jinja2 import Markup
+
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 
 db = SQLAlchemy(app)
 
+file_path = op.join(op.dirname(__file__), 'static/images')
 
 class Menu_str(db.Model):
     __tablename__='Menu_str'
@@ -21,6 +30,22 @@ class Menu_str(db.Model):
     rstaurant = db.relationship("Restaurant")
     dish = db.relationship("Dish")
 
+class ImageView(sqla.ModelView):
+    def _list_thumbnail(view, context, model, name):
+        if not model.image:
+            return ''
+        return Markup('<img src="%s">' % url_for('static',
+                                                 filename='images/'+form.thumbgen_filename(model.image)))
+
+    column_formatters = {
+        'image': _list_thumbnail
+    }
+
+    form_extra_fields = {
+        'image': form.ImageUploadField('Image',
+                                      base_path=file_path,
+                                      thumbnail_size=(200, 200, True))
+    }
 
 class Dish(db.Model):
     __tablename__='Dish'
@@ -62,8 +87,8 @@ admin = Admin(app)
 
 
 admin.add_view(ModelView(Menu_str, db.session))
-admin.add_view(ModelView(Dish, db.session))
-admin.add_view(ModelView(Restaurant, db.session))
+admin.add_view(ImageView(Dish, db.session))
+admin.add_view(ImageView(Restaurant, db.session))
 admin.add_view(ModelView(Category, db.session))
 
 
