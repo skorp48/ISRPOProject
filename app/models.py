@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Table, Column
 from sqlalchemy import String, Integer, ForeignKey
 from app import db
+from flask_security import UserMixin, RoleMixin
 
 class Menu_str(db.Model):
     __tablename__='Menu_str'
@@ -44,10 +45,26 @@ class Category(db.Model):
     def __str__(self):
         return "{}".format(self.name)
 
-    __tablename__='Category'
+roles_users = db.Table('roles_users',
+        db.Column('user_id', db.Integer(), db.ForeignKey('User.id')),
+        db.Column('role_id', db.Integer(), db.ForeignKey('Role.id')))
+
+class User(db.Model, UserMixin):
+    __tablename__='User'
+    id = db.Column(db.Integer(), primary_key=True)
+    email = db.Column(db.String(), unique=True)
+    password = db.Column(db.String())
+    active = db.Column(db.Boolean)
+    #role_id = db.Column(db.Integer(), ForeignKey('Role.id'))
+    #roles = db.relationship("Role")
+    roles = db.relationship('Role', secondary=roles_users,
+                            backref=db.backref('users', lazy='dynamic'))
+
+class Role(db.Model, RoleMixin):
+    __tablename__='Role'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String())
-
+    
     def __str__(self):
-        return "{}".format(self.name)
+        return self.name
 
