@@ -10,17 +10,16 @@
                     <li class="nav-item"> <a href="/каталог/{{ item }}" > {{ item }} </a> </li>
                 {% endfor %}
             </ul>
-            <a class="nav-item dish-list" href="#" >
+            <a class="nav-item dish-list" href="/cart" >
                 <div class="nav-item">
                     <img src="{{ url_for('static', filename='images/tray-cart.png') }}" height="100%">
-                    
-
                 </div>
             </a>
             <div class="count">
                 Блюд:
             </div>
         </div>
+{%if mode is sameas true %}
 {% if ((cart|length) == 0) %}
 <h1 class="cart-title">Поднос пуст</h1>
 {% else %}
@@ -37,9 +36,27 @@
                 <button class="cart-cnt cart-cnt--up" >  </button>
             </div>
             </td>
+            <td>
+                <button class="cart-cnt cart-cnt--del" >  </button>
+            </td>
         </tr>
     {% endfor %}
     </tbody>
 </table>
+<div class="cart-search" >
+    <a  class="cart-search-ok" href="/cart/search">Найти заведение</a>
+</div>
 {% endif %}
+{% else %}
+{% if ((r_lst|length) == 0) %}
+    <p> Ну и изврат</p>
+    <img src="{{ url_for('static', filename='images/hh.PNG') }}" >
+{% else %}
+<p> Подходящие заведения: </p>
+{% for item in r_lst %}
+    <p> {{item.name}}</p>
+{% endfor %}
+{% endif %}
+{% endif %}
+
 </html>
