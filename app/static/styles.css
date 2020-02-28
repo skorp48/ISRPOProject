@@ -46,6 +46,18 @@
                 display: flex;
                 align-items: center;
             }
+            .cart-search{
+                width:438px; /*временно*/
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .cart-search a{
+                margin:10px;
+                border-radius: 2px;
+                border: 2px solid #52545a;
+                padding: 5px;
+            }
             .cart-title {
                 color: #070011;
                 font-size: 18px;
@@ -71,6 +83,10 @@
             }
             .cart-cnt--down{
                 background-image: url(images/minus.svg);
+            }
+            .cart-cnt--del{
+                background-image: url(images/trash.svg);
+                border:none !important;
             }
             .cart-cnt-t{
                 width: 50px;
@@ -107,7 +123,7 @@
             }
             .cont-item-img{
                 height:100px;
-                width:200px;
+                width:100%;
                 text-align: center;
                 vertical-align:middle;
             }
@@ -133,3 +149,35 @@
             a.nav-item:hover{
                 background:none;
             }
+
+            .b-container{
+                width:200px;
+                height:150px;
+                background-color: #ccc;
+                margin:0px auto;
+                padding:10px;
+                font-size:30px;
+                color: #fff;
+            }
+            .b-popup{
+                width:100%;
+                min-height:100%;
+                background-color: rgba(0,0,0,0.5);
+                overflow:hidden;
+                position:fixed;
+                top:0px;
+            }
+            .b-popup .b-popup-content{
+                margin:40px auto 0px auto;
+                width:100px;
+                height: 40px;
+                padding:10px;
+                background-color: #c5c5c5;
+                border-radius:5px;
+                box-shadow: 0px 0px 10px #000;
+            }
+
+
+
+
+

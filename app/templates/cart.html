@@ -3,6 +3,20 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="{{url_for('static', filename='script.js')}}"></script>
+        <script>
+            $(document).ready(function(){
+                //Скрыть PopUp при загрузке страницы
+                PopUpHide();
+            });
+            //Функция отображения PopUp
+            function PopUpShow(){
+                $("#popup1").show();
+            }
+            //Функция скрытия PopUp
+            function PopUpHide(){
+                $("#popup1").hide();
+            }
+        </script>
     </head>
 <div class="nav-m">
             <ul >
@@ -49,8 +63,9 @@
 {% endif %}
 {% else %}
 {% if ((r_lst|length) == 0) %}
-    <p> Ну и изврат</p>
-    <img src="{{ url_for('static', filename='images/hh.PNG') }}" >
+    <p>Нет подходящего заведения</p>
+    <!--<p> Ну и изврат</p>-->
+    <!--<img src="{{ url_for('static', filename='images/hh.PNG') }}" >-->
 {% else %}
 <p> Подходящие заведения: </p>
 {% for item in r_lst %}
@@ -60,3 +75,4 @@
 {% endif %}
 
 </html>
+

@@ -68,12 +68,31 @@ def add_user():
     
     return redirect(url_for("admin.index"))
 
+def CartAdd(name,cnt):
+    global cart
+    try:
+        cart.update({name:cnt})
+    except:
+        cart.update(name=cnt+1)
+    return cart
+
+@app.route('/каталог/<string:kat_name>')
+def hello_world_again(kat_name):
+    cat = db.session.query(Category).all()
+    query=db.session.query(Category,Dish)
+    query=query.join(Dish, Dish.category_id == Category.id)
+    lst=[]
+    dishes=query.filter(Category.name==kat_name).all()
+    for category,dish in dishes:
+        lst.append(dish)
+    return render_template('index.html',catlst=cat,dishlst=lst,cart=cart)
+
 @app.route("/cart/add", methods=['POST'])
 def add_to_cart():
     session['cart'] = request.values.dicts[1]['dishlst']
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+    #return redirect(url_for('cart'))
 
-# улучшенный вариант 
 @app.route("/cart/search", methods=['POST','GET'])
 def search_place():
     #session['cart'] = request.values.dicts[1]['dishlst']
@@ -114,34 +133,9 @@ def search_place():
         #return render_template('cart.html', catlst=cat, cart=[],r_lst=f_rez,mode=False)
     return redirect(url_for('cart'))
 
-
-@app.route('/каталог/<string:kat_name>')
-def hello_world_again(kat_name):
-    cat = db.session.query(Category).all()
-    query=db.session.query(Category,Dish)
-    query=query.join(Dish, Dish.category_id == Category.id)
-    lst=[]
-    dishes=query.filter(Category.name==kat_name).all()
-    for category,dish in dishes:
-        lst.append(dish)
-    #last_ds=lst
-    return render_template('index.html',catlst=cat,dishlst=lst)
-
-@app.route("/check_cart", methods=['POST'])
-def check_cart():
-    lst = request.values.dicts[1]['dishlst']
-    cat = db.session.query(Category).all()
-    query = db.session.query(Dish)
-    dish_cart_list = []
-    data = json.loads(lst)
-    for item in data:
-        cart_dish_id = item["dish"]
-        dishes = query.filter(Dish.id == int(cart_dish_id)).all()
-        dish_cart_list.append(dishes[0])
-    return render_template('index.html', catlst=cat, dishlst=dish_cart_list, cart=cart)
-
 @app.route("/cart", methods=['POST','GET'])
 def cart():
+    #if request.method == 'GET':
     cat = db.session.query(Category).all()
     if 'cart' in session:
         lst=session['cart']
@@ -155,9 +149,9 @@ def cart():
         cart_dish_id = item["dish"]
         dishes = query.filter(Dish.id == int(cart_dish_id)).all()
         dish_cart_list.append({"dish":dishes[0],"quantity":item["quantity"]})
-    return render_template('cart.html',catlst=cat,cart=dish_cart_list)
+    return render_template('cart.html',catlst=cat,cart=dish_cart_list,mode=True)
 
 @app.route('/')
 def hello_world():
     cat = db.session.query(Category).all()
-    return render_template('index.html',catlst=cat)
+    return render_template('index.html',catlst=cat,cart=cart)
