@@ -72,6 +72,10 @@
             .cart-cnt--down{
                 background-image: url(images/minus.svg);
             }
+            .cart-cnt--del{
+                background-image: url(images/trash.svg);
+                border:none !important;
+            }
             .cart-cnt-t{
                 width: 50px;
                 display: block;
