@@ -9,7 +9,6 @@ from flask_security import Security, SQLAlchemyUserDatastore
 import json
 
 
-
 app = Flask(__name__)
 app.config.from_object('config.Config')
 
@@ -21,7 +20,10 @@ try:
 except OSError:
     pass
 
+
+
 from app.models import Menu_str, Dish, Restaurant, Category, User, Role
+
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 
 admin = Admin(app)

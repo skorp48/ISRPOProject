@@ -4,29 +4,32 @@ from sqlalchemy import String, Integer, ForeignKey
 from app import db
 from flask_security import UserMixin, RoleMixin
 
+
 class Menu_str(db.Model):
-    __tablename__='Menu_str'
+    __tablename__ = 'Menu_str'
     id = db.Column(db.Integer(), primary_key=True)
     dish_id = db.Column(db.Integer(), ForeignKey('Dish.id'))
-    restaurant_id = db.Column(db.Integer(), ForeignKey('Restaurant.id'))  
-    cost = db.Column(db.Integer()) 
+    restaurant_id = db.Column(db.Integer(), ForeignKey('Restaurant.id'))
+    cost = db.Column(db.Integer())
     restaurant = db.relationship("Restaurant")
     dish = db.relationship("Dish")
 
+
 class Dish(db.Model):
-    __tablename__='Dish'
+    __tablename__ = 'Dish'
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(), nullable=False) 
+    name = db.Column(db.String(), nullable=False)
     desc = db.Column(db.String())
     image = db.Column(db.String())
     category_id = db.Column(db.Integer(), ForeignKey('Category.id'))
     category = db.relationship("Category")
-      
+
     def __str__(self):
         return "{}".format(self.name)
 
+
 class Restaurant(db.Model):
-    __tablename__='Restaurant'
+    __tablename__ = 'Restaurant'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String())
     address = db.Column(db.String())
@@ -36,21 +39,25 @@ class Restaurant(db.Model):
 
     def __str__(self):
         return "{}".format(self.name)
-   
+
+
 class Category(db.Model):
-    __tablename__='Category'
+    __tablename__ = 'Category'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String())
 
     def __str__(self):
         return "{}".format(self.name)
 
+
 roles_users = db.Table('roles_users',
-        db.Column('user_id', db.Integer(), db.ForeignKey('User.id')),
-        db.Column('role_id', db.Integer(), db.ForeignKey('Role.id')))
+                       db.Column('user_id', db.Integer(),
+                                 db.ForeignKey('User.id')),
+                       db.Column('role_id', db.Integer(), db.ForeignKey('Role.id')))
+
 
 class User(db.Model, UserMixin):
-    __tablename__='User'
+    __tablename__ = 'User'
     id = db.Column(db.Integer(), primary_key=True)
     email = db.Column(db.String(), unique=True)
     password = db.Column(db.String())
@@ -60,11 +67,11 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
 
+
 class Role(db.Model, RoleMixin):
-    __tablename__='Role'
+    __tablename__ = 'Role'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String())
-    
+
     def __str__(self):
         return self.name
-
