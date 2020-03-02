@@ -14,6 +14,12 @@ from flask import render_template,request,redirect,session,url_for
 import json
 from jinja2 import Markup
 
+from flask_admin import helpers as admin_helpers
+from flask_security import Security, SQLAlchemyUserDatastore
+from flask_security import UserMixin, RoleMixin
+from flask_security.utils import hash_password
+from flask_security import current_user
+
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 
@@ -30,7 +36,20 @@ class Menu_str(db.Model):
     rstaurant = db.relationship("Restaurant")
     dish = db.relationship("Dish")
 
-class ImageView(sqla.ModelView):
+class MyImageView(sqla.ModelView):
+    def is_accessible(self):
+        return (current_user.is_active and
+                current_user.is_authenticated and
+                current_user.has_role('admin')
+        )
+
+    def _handle_view(self, name, **kwargs):
+            if not self.is_accessible():
+                if current_user.is_authenticated:
+                    # permission denied
+                    abort(403)
+                else:
+                    return redirect(url_for('security.login', next=request.url))
     def _list_thumbnail(view, context, model, name):
         if not model.image:
             return ''
@@ -46,6 +65,21 @@ class ImageView(sqla.ModelView):
                                       base_path=file_path,
                                       thumbnail_size=(200, 200, True))
     }
+
+class MyModelView(sqla.ModelView):
+    def is_accessible(self):
+        return (current_user.is_active and
+                current_user.is_authenticated and
+                current_user.has_role('admin')
+        )
+
+    def _handle_view(self, name, **kwargs):
+            if not self.is_accessible():
+                if current_user.is_authenticated:
+                    # permission denied
+                    abort(403)
+                else:
+                    return redirect(url_for('security.login', next=request.url))
 
 class Dish(db.Model):
     __tablename__='Dish'
@@ -83,13 +117,49 @@ class Category(db.Model):
 
 
 
+roles_users = db.Table('roles_users',
+        db.Column('user_id', db.Integer(), db.ForeignKey('User.id')),
+        db.Column('role_id', db.Integer(), db.ForeignKey('Role.id')))
+
+class User(db.Model, UserMixin):
+    __tablename__='User'
+    id = db.Column(db.Integer(), primary_key=True)
+    email = db.Column(db.String(), unique=True)
+    password = db.Column(db.String())
+    active = db.Column(db.Boolean)
+    #role_id = db.Column(db.Integer(), ForeignKey('Role.id'))
+    #roles = db.relationship("Role")
+    roles = db.relationship('Role', secondary=roles_users,
+                            backref=db.backref('users', lazy='dynamic'))
+
+class Role(db.Model, RoleMixin):
+    __tablename__='Role'
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String())
+
+    def __str__(self):
+        return self.name
+
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+
 admin = Admin(app)
+security = Security(app, user_datastore)
 
+admin.add_view(MyModelView(Menu_str, db.session))
+admin.add_view(MyImageView(Dish, db.session))
+admin.add_view(MyImageView(Restaurant, db.session))
+admin.add_view(MyModelView(Category, db.session))
+admin.add_view(MyModelView(User, db.session))
+admin.add_view(MyModelView(Role, db.session))
 
-admin.add_view(ModelView(Menu_str, db.session))
-admin.add_view(ImageView(Dish, db.session))
-admin.add_view(ImageView(Restaurant, db.session))
-admin.add_view(ModelView(Category, db.session))
+@security.context_processor
+def security_context_processor():
+    return dict(
+        admin_base_template=admin.base_template,
+        admin_view=admin.index_view,
+        h=admin_helpers,
+        get_url=url_for
+    )
 
 
 #app.run()
@@ -169,6 +239,15 @@ def cart():
         dish_cart_list.append({"dish":dishes[0],"quantity":item["quantity"]})
     return render_template('cart.html',catlst=cat,cart=dish_cart_list)
 
+@app.route("/admin", methods=['POST'])
+def add_user():
+    if request.method == 'POST':
+        email = request.form.get('login')
+        password = request.form.get('password')
+        user_datastore.create_user(email=email, password=hash_password(password))
+        db.session.commit()
+
+    return redirect(url_for("admin.index"))
 @app.route('/')
 def hello_world():
     cat = db.session.query(Category).all()

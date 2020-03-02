@@ -1,0 +1,41 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+{{ super() }}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+
+            {% if not current_user.is_authenticated %}
+            <p class="lead">
+                Для продолжения необходимо авторизироваться
+            </p>
+            <p>
+                <a class="btn btn-primary" href="{{ url_for('security.login') }}">Login</a> 
+            </p>
+            
+            {% endif %}
+
+            {% if current_user.is_authenticated and current_user.has_role('admin') %}
+            <div class="row-fluid"> 
+                <div class="col-sm-8 col-sm-offset-2">
+                <h2>Добавление пользователя</h2>
+                    <div class="well">
+                    <form action ="/admin" method="POST">
+                        <p>Логин: &nbsp&nbsp&nbsp <input type="text" class="form-control" name="login"></p>
+                        <p>Пароль: <input type="text" class="form-control" name="password"></p>
+                        <input class="btn btn-primary" type="submit" value="Добавить"></div>
+                    </form>
+                </div>
+            </div>
+            </div>
+            {% endif %}
+
+            <a  class="btn btn-primary" href="/"><i class="glyphicon glyphicon-chevron-left"></i> Back</a>
+            {% if current_user.is_authenticated %}
+            <a  class="btn btn-primary" href="{{ url_for('security.logout') }}"><i class="glyphicon glyphicon-chevron-left"></i> Log out</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock body %}
