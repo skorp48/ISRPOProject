@@ -1,17 +1,51 @@
 .detail-window{
-        position:absolute;
+        position:fixed;
         top:50%; left:50%;
-        width:800px;
-        height:400px;
+        width:850px;
+        /*height:400px;*/
+        height: max-content;
         background:#fefefe;
         margin:-200px -400px;
         display:none;
         z-index:11;
       }
+.detail-window p{
+    /*margin:20px;*/
+}
+.detail-window table{
+    margin:20px;
+    width:400px;
+}
+.detail-title{
+        text-decoration: underline;
+        font-size: x-large;
+        font-style: oblique;
+        font-weight: bold;
+        font-family: serif;
+        margin:0;
+}
 
+.detail-lst{
+        display: block;
+        border: 2px solid black;
+        border-collapse: separate;
+        border-spacing: 4px;
+        margin-top: 10px;
+}
+.detail-lst1{
+    text-decoration: underline;
+}
+.detail-lst2{
+        font-style: italic;
+        font-family: serif;
+        font-size: 18px;
+}
+.detail-lst2 p{
+        margin:0;
+}
 .detail-button{
         display:block;
-        width:200px;
+        width:max-content;
         padding:8px 0;
         background:lightgreen;
         margin:0 40px;
@@ -19,14 +53,30 @@
         cursor:pointer;
       }
 
+.rest-name{
+    margin:0px;
+}
+.rest-addr{
+    width: 30%;
+    margin:0px;
+}
 .close-detail{
         display:block;
-        width:200px;
-        padding:8px 0;
+        /*width:200px;*/
+        /*padding:8px 0;*/
         background:red;
-        margin:0 40px;
+        /*margin:0 40px;*/
         text-align:center;
         cursor:pointer;
+
+        width: 25px;
+        height: 25px;
+        position: absolute;
+        top: 0%;
+        right: 0%;
+        border: 1px solid black;
+        border-radius: 15%;
+        color: white;
       }
 
 .js{
@@ -37,4 +87,22 @@
         background:rgba(0,0,0,.3);
         z-index:10;
         display:none;
+}
+
+.msc{
+    margin:15px;
+    font-size: 16px;
+    font-family: Geneva,Arial;
+}
+
+.cont-restaurant{
+    width:500px;
+    padding: 20px 15px 30px;
+    font-size: 16px;
+    font-family: Geneva,Arial;
+    position: relative;
+}
+
+.cont-restaurant:hover{
+    background:#dddddd;
 }

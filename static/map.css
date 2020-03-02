@@ -1,11 +1,13 @@
 .open-map{
-        width:400px;
-        height:250px;
-        background:pink;
-        position:absolute;
-        left:45%;
-        margin-top:-75px;
-        display:none;
+        width: 400px;
+        height: 250px;
+        background: pink;
+        position: absolute;
+        left: 50%;
+        /* margin-left: -150px; */
+        /* top: 50%; */
+        margin-top: -75px;
+        display: none;
       }
 
 
@@ -17,6 +19,8 @@
         margin:0 40px;
         text-align:center;
         cursor:pointer;
+        border: 1px solid;
+        border-radius: 9px;
       }
 
 .close-map{
