@@ -1,10 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy import Table, Column
 from sqlalchemy import MetaData, String, Integer, ForeignKey
-#import sqlite3
+import sqlite3
  
-#conn = sqlite3.connect("project.db")
-engine = create_engine('sqlite:///project.db', echo = True)
+conn = sqlite3.connect("project.db")
+#engine = create_engine('sqlite:///project.db', echo = True)
 
 metadata = MetaData()
 
@@ -44,4 +44,17 @@ menu_str = Table(
 )
 
 
-metadata.create_all(engine)
+#metadata.create_all(engine)
+
+
+
+cur = conn.cursor()
+cur.execute("SELECT id, address, phone, coord, image FROM restaurant")
+rest = cur.fetchall()
+print(rest)
+
+for elem in rest:
+    cur.execute("INSERT INTO restaddress(rest_id, address, phone, coord, image)\
+                    VALUES (?, ?, ?, ?, ?)", (elem[0], elem[1], elem[2], elem[3], elem[4]))
+
+conn.commit()

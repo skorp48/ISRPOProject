@@ -22,21 +22,21 @@ except OSError:
 
 
 
-from app.models import Menu_str, Dish, Restaurant, Category, User, Role
-
+from app.models import Menu_str, Dish, Restaurant, Category, User, Role, RestAddress
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 
 admin = Admin(app)
 security = Security(app, user_datastore)
 
 from app.views import MyModelView, MyImageView
-
 admin.add_view(MyModelView(Menu_str, db.session))
+admin.add_view(MyImageView(RestAddress, db.session))
 admin.add_view(MyImageView(Dish, db.session))
-admin.add_view(MyImageView(Restaurant, db.session))
+admin.add_view(MyModelView(Restaurant, db.session))
 admin.add_view(MyModelView(Category, db.session))
 admin.add_view(MyModelView(User, db.session))
 admin.add_view(MyModelView(Role, db.session))
+
 
 # define a context processor for merging flask-admin's template context into the
 # flask-security views.

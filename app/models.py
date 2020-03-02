@@ -32,13 +32,20 @@ class Restaurant(db.Model):
     __tablename__ = 'Restaurant'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String())
+
+    def __str__(self):
+        return "{}".format(self.name)
+
+class RestAddress(db.Model):
+    __tablename__ = 'RestAddress'
+    id = db.Column(db.Integer(), primary_key=True)
     address = db.Column(db.String())
     phone = db.Column(db.String())
     coord = db.Column(db.String())
     image = db.Column(db.String())
+    rest_id = db.Column(db.Integer(), ForeignKey('Restaurant.id'))
+    restaurant = db.relationship("Restaurant")
 
-    def __str__(self):
-        return "{}".format(self.name)
 
 
 class Category(db.Model):
