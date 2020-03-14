@@ -85,55 +85,50 @@ def CartAdd(name, cnt):
 @app.route('/каталог/<string:kat_name>')
 def hello_world_again(kat_name):
     cat = db.session.query(Category).all()
-    query = db.session.query(Category, Dish)
-    query = query.join(Dish, Dish.category_id == Category.id)
-    lst = []
-    dishes = query.filter(Category.name == kat_name).all()
-    for category, dish in dishes:
+    query=db.session.query(Category,Dish)
+    query=query.join(Dish, Dish.category_id == Category.id)
+    lst=[]
+    dishes=query.filter(Category.name==kat_name).all()
+    for category,dish in dishes:
         lst.append(dish)
-    return render_template('index.html', catlst=cat, dishlst=lst, cart=cart)
-
+    return render_template('index.html',catlst=cat,dishlst=lst,cart=cart)
 
 @app.route("/cart/add", methods=['POST'])
 def add_to_cart():
     session['cart'] = request.values.dicts[1]['dishlst']
-    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
-    # return redirect(url_for('cart'))
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
-
-@app.route("/cart/search", methods=['POST', 'GET'])
+# улучшенный вариант 
+@app.route("/cart/search", methods=['POST','GET'])
 def search_place():
     #session['cart'] = request.values.dicts[1]['dishlst']
-    lst = session['cart']
-    queryA = db.session.query(Restaurant.id)
-    queryA = queryA.join(Menu_str, Menu_str.restaurant_id == Restaurant.id)
+    lst=session['cart']
+    queryA=db.session.query(Restaurant.id)
+    queryA=queryA.join(Menu_str, Menu_str.restaurant_id == Restaurant.id)
     data = json.loads(lst)
-    q_lst = []
+    q_lst=[]
     for item in data:
-        q_lst.append(queryA.filter(Menu_str.dish_id == int(item["dish"])))
-    queryB = intersect(*q_lst)
-    rez = db.session.execute(queryB).fetchall()
+        q_lst.append(queryA.filter(Menu_str.dish_id==int(item["dish"])))
+    queryB=intersect(*q_lst)
+    rez=db.session.execute(queryB).fetchall()
     cat = db.session.query(Category).all()
-    if len(rez) == 0:
-        return render_template('cart.html', catlst=cat, cart=[], r_lst=[], mode=False)
+    if len(rez)==0:
+        return render_template('cart.html', catlst=cat, cart=[],r_lst=[],mode=False)
     else:
-        queryC = db.session.query(Restaurant)
-        f_rez = []
+        queryC=db.session.query(Restaurant)
+        f_rez=[]
         for r in rez:
-            rest = queryC.filter(Restaurant.id == int(r[0])).first()
-            # f_rez.append(rest)
-            pr = 0
-            owc = []
+            rest=queryC.filter(Restaurant.id==int(r[0])).first()
+            #f_rez.append(rest)
+            pr=0
+            owc=[]
             for item in data:
-                pr = pr+int(item["quantity"]) * (db.session.query(Menu_str.cost).filter(
-                    Menu_str.dish_id == int(item["dish"])).filter(Menu_str.restaurant_id == int(r[0])).first()[0])
-                owp = (db.session.query(Menu_str.cost).filter(Menu_str.dish_id == int(
-                    item["dish"])).filter(Menu_str.restaurant_id == int(r[0])).first()[0])
-                own = db.session.query(Dish.name).filter(
-                    Dish.id == int(item["dish"])).first()[0]
-                owq = int(item["quantity"])
-                owc.append([own, owp, owq])
-            f_rez.append({'rest': rest, 'total': pr, 'dl': owc})
+                pr=pr+int(item["quantity"])* (db.session.query(Menu_str.cost).filter(Menu_str.dish_id==int(item["dish"])).filter(Menu_str.restaurant_id==int(r[0])).first()[0])
+                owp=(db.session.query(Menu_str.cost).filter(Menu_str.dish_id==int(item["dish"])).filter(Menu_str.restaurant_id==int(r[0])).first()[0])
+                own=db.session.query(Dish.name).filter(Dish.id==int(item["dish"])).first()[0]
+                owq=int(item["quantity"])
+                owc.append([own,owp,owq])
+            f_rez.append({'rest':rest,'total':pr,'dl':owc})
         query = db.session.query(Dish)
         dish_cart_list = []
         for item in data:
@@ -141,31 +136,29 @@ def search_place():
             dishes = query.filter(Dish.id == int(cart_dish_id)).all()
             dish_cart_list.append(dishes[0])
         return render_template('found_restaurant.html', catlst=cat, cart=dish_cart_list, r_lst=f_rez)
-        # return render_template('cart.html', catlst=cat, cart=[],r_lst=f_rez,mode=False)
+        #return render_template('cart.html', catlst=cat, cart=[],r_lst=f_rez,mode=False)
     return redirect(url_for('cart'))
 
 
-@app.route("/cart", methods=['POST', 'GET'])
+@app.route("/cart", methods=['POST','GET'])
 def cart():
-    # if request.method == 'GET':
     cat = db.session.query(Category).all()
     if 'cart' in session:
-        lst = session['cart']
+        lst=session['cart']
     else:
-        return render_template('cart.html', catlst=cat, cart=[])
+        return render_template('cart.html',catlst=cat,cart=[])
     cat = db.session.query(Category).all()
-    dish_cart_list = []
+    dish_cart_list=[]
     query = db.session.query(Dish)
     data = json.loads(lst)
     for item in data:
         cart_dish_id = item["dish"]
         dishes = query.filter(Dish.id == int(cart_dish_id)).all()
-        dish_cart_list.append(
-            {"dish": dishes[0], "quantity": item["quantity"]})
-    return render_template('cart.html', catlst=cat, cart=dish_cart_list, mode=True)
+        dish_cart_list.append({"dish":dishes[0],"quantity":item["quantity"]})
+    return render_template('cart.html',catlst=cat,cart=dish_cart_list)
 
 
 @app.route('/')
 def hello_world():
     cat = db.session.query(Category).all()
-    return render_template('index.html', catlst=cat, cart=cart)
+    return render_template('index.html',catlst=cat,cart=cart)

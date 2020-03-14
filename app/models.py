@@ -1,8 +1,8 @@
+from flask_security import RoleMixin, UserMixin
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Table, Column
-from sqlalchemy import String, Integer, ForeignKey
+from sqlalchemy import Column, ForeignKey, Integer, String, Table
+
 from app import db
-from flask_security import UserMixin, RoleMixin
 
 
 class Menu_str(db.Model):
@@ -36,6 +36,7 @@ class Restaurant(db.Model):
     def __str__(self):
         return "{}".format(self.name)
 
+
 class RestAddress(db.Model):
     __tablename__ = 'RestAddress'
     id = db.Column(db.Integer(), primary_key=True)
@@ -45,7 +46,6 @@ class RestAddress(db.Model):
     image = db.Column(db.String())
     rest_id = db.Column(db.Integer(), ForeignKey('Restaurant.id'))
     restaurant = db.relationship("Restaurant")
-
 
 
 class Category(db.Model):

@@ -26,7 +26,7 @@ function renderCount()
         cnt += lst[i].quantity;
         }
 
-    $(".count").html("Блюд: " + cnt);
+    $(".count").html(cnt);
 }
 
 function PopUpShow(){

@@ -8,6 +8,15 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='map.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="{{url_for('static', filename='script.js')}}"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+   crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+   integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+   crossorigin=""></script>
+
     <script>
 
     $(document).ready(function(){
@@ -21,14 +30,15 @@
         $(".close-detail").click(function(){
             //var item=$(this).closest('detail-window')[0];
             //item.hide();
-            $($(this).closest('.cont-restaurant')[0].children[3]).hide();
+            $($(this).closest('.cont-restaurant')[0].children[4]).hide();
             //$(".detail-window").hide();
+            $(".open-map").hide();
             $(".js").hide();
         });
 
         $(".detail-button").click(function(){
             //var item=$(this).closest('detail-window')[0];
-            $($(this).closest('.cont-restaurant')[0].children[3]).show();
+            $($(this).closest('.cont-restaurant')[0].children[4]).show();
             //item.show();
             //$(".detail-window").show();
             $(".js").show();
@@ -44,6 +54,23 @@
             $(".open-map").hide();
         });
         $(".open-map-button").click(function(){
+            var lat=parseFloat(this.dataset.lat) ;
+            var lng=parseFloat(this.dataset.lng) ;
+            var desc=$(this).closest('.cont-restaurant')[0].children[0].textContent ;
+            // $(document.getElementsByClassName("open-map-button")[0].closest('.cont-restaurant').children[4]).find('.open-map')[0].id
+            var mapid=$($(this).closest('.cont-restaurant')[0].children[4]).find('.open-map')[0].id;
+            document.getElementById(mapid).innerHTML=null;
+            var container = L.DomUtil.get(mapid); if(container != null){ container._leaflet_id = null; }
+            {
+                var map = L.map(mapid).setView([lat, lng], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+                map._onResize();
+                    L.marker([lat, lng]).addTo(map)
+                        .bindPopup(desc)
+                        .openPopup();
+            }
             $(".open-map").show();
         });
     });
@@ -60,43 +87,90 @@
         </ul>
         <a class="nav-item dish-list" href="/cart" >
             <div class="nav-item">
-                <img src="{{ url_for('static', filename='images/tray-cart.png') }}" height="100%">
+                <img src="{{ url_for('static', filename='images/tray.png') }}" height="100%">
             </div>
         </a>
         <div class="count">
-                Блюд:
         </div>
     </div>
     <!-- Список завдений  -->
     {% if ((r_lst|length) == 0) %}
         <!--  Если заведения не найдены  -->
-        <p> Ну и изврат</p>
-        <img src="{{ url_for('static', filename='images/hh.PNG') }}" >
+        <p class="msc" >Нет подходящего заведения</p>
+        <!--<p> Ну и изврат</p>-->
+        <!--<img src="{{ url_for('static', filename='images/hh.PNG') }}" >-->
     {% else %}
          <!--  Если найдены  -->
-        <p> Подходящие заведения: </p>
+        <p class="msc" > Подходящие <em>вам</em> заведения: </p>
         {% for item in r_lst %}
             <div class="cont-restaurant">
-                <p> {{item['rest'].name}}</p>
-                <P> Цена : {{item['total']}} </P>
-                <div class="cart-search" >
+                <p class="rest-name"> {{item['rest'].name}},</p>
+                <p class="rest-addr"> {{item['rest'].address}}</p>
+                <P> Итого : {{item['total']}} </P>
+                <div class="cont-search" >
                     <a  class="detail-button" > Подробнее </a>
                 </div>
                 <!-- Вспылвающее окно "Подробнее"-->
-                <div class="detail-window" id>
-                    <p> {{item['rest'].name}} </p>
-                    <p> {{item['rest'].address}}</p>
-                    <a href="#" class="open-map-button"> Показать на карте </a>
-                        <div class="open-map">
-                            <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3Ad0ed4653b0200ee8a0ccf6879009b6d6e9d43775965c7141fbd3634df5f881fb&amp;source=constructor" width="500" height="400" frameborder="0"></iframe>
-                            <a href="#" class="close-map"> Закрыть </a>
-                        </div>
-                    <div class="dish-item-cost">
+                <div class="detail-window" >
+                    <table >
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <p class="detail-title"> {{item['rest'].name}} </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p> {{item['rest'].address}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {% set coords = item['rest'].coord.split(' ') %}
+                                    <a href="#" data-lat="{{coords[0]}}" data-lng="{{coords[1]}}" class="open-map-button"> Показать на карте </a>
+                                    <div class="open-map" id="leafletmap{{item['rest'].id}}">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody class="detail-lst">
+                            <tr>
+                            <td>
+                                <p class="detail-lst1">Вы выбрали:</p>
+                            </td>
+                        </tr>
                         {% for d in item['dl'] %}
-                            <p>{{ d[0] }} {{d[2]}} * {{d[1]}} руб</p>
+                        <tr class="detail-lst2">
+                            <td>
+                                <p>{{ d[0] }}</p>
+                            </td>
+                            <td>
+                                <p>{{d[2]}} * {{d[1]}} руб </p>
+                            </td>
+                        </tr>
                         {% endfor %}
-                    </div>
-                    <a href="#" class="close-detail"> Закрыть </a>
+                        <tr>
+                            <td >
+                                <p>Итого </p>
+                            </td>
+                            <td>
+                                <p>{{item['total']}} руб.</p>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!--<p> {{item['rest'].name}} </p>-->
+                    <!--<p> {{item['rest'].address}}</p>-->
+                    <!--{% set coords = item['rest'].coord.split(' ') %}-->
+                    <!--<a href="#" data-lat="{{coords[0]}}" data-lng="{{coords[1]}}" class="open-map-button"> Показать на карте </a>-->
+                    <!--    <div class="open-map" id="leafletmap{{item['rest'].id}}">-->
+                    <!--    </div>-->
+                    <!--<div class="dish-item-cost">-->
+                    <!--    {% for d in item['dl'] %}-->
+                    <!--        <p>{{ d[0] }} {{d[2]}} * {{d[1]}} руб</p>-->
+                    <!--    {% endfor %}-->
+                    <!--</div>-->
+                    <a href="#" class="close-detail"> &#10006; </a>
                 </div>
                 <div class="js"></div>
             </div>

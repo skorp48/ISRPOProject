@@ -10,7 +10,7 @@ metadata = MetaData()
 
 
 restaurant = Table(
-    'Restaurant', metadata,
+    'Restaurant', metadata,з
     Column('id', Integer, primary_key=True),
     Column('name', String),
     Column('address', String),
